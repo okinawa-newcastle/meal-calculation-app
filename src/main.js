@@ -15,7 +15,7 @@ new Vue({
     message2 : 'hoge piko',
     btnBasalMetabolicRate : '計算',
     basalMetabolicRate : '',
-    calorieConsumption : '',
+    estimatedCalories : {},
     inputWeight : null,
     inputBodyfat : null,
     inputErrorAlert : '',
@@ -45,15 +45,18 @@ new Vue({
         // JISS方式
         this.basalMetabolicRate = 28.5 * (this.inputWeight - (this.inputWeight * (this.inputBodyfat/100)))
         this.basalMetabolicRate = Math.round(this.basalMetabolicRate)
-        this.calorieConsumption = this.basalMetabolicRate * this.inputActivityLevel
+        let estimatedCalorieMaintain  = this.basalMetabolicRate * this.inputActivityLevel
+        this.estimatedCalories.maintain = estimatedCalorieMaintain
+        this.estimatedCalories.mildWeightLoss = estimatedCalorieMaintain
         console.log('test')
       }
 
-    },
-    filters: {
-      addComma: function (value) {
-        return value.toLocaleString();
-      }
+    }
+  },
+  filters: {
+    addComma: function (value) {
+      value = Math.round(value)
+      return value.toLocaleString()
     }
   }
 })

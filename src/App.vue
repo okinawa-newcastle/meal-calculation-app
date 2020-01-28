@@ -16,6 +16,9 @@
     <v-content>
       <input v-model="message" placeholder="edit me">
 <p>Message is: {{ message }}</p>
+      {{ message }}
+      {{ message2 }}
+      <input v-model='message2'>
     </v-content>
   </v-app>
 </template>
@@ -30,7 +33,8 @@ export default {
   },
 
   data: () => ({
-    message : 'hoge piko'
+    message : 'hoge piko',
+    message2 : ''
   }),
 };
 </script>

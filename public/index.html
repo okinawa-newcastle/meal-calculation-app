@@ -26,11 +26,16 @@
         <option>1.7</option>
       </select>
       <button type="button" @click="setBasalMetabolicRate">{{btnBasalMetabolicRate}}</button>
-      <div v-if="inputErrorAlert">{{ inputErrorAlert }}を入力して下さい</div>
+      <div v-if="inputErrorAlertMessage">{{ inputErrorAlertMessage }}を入力して下さい</div>
       <div v-if="basalMetabolicRate">
         <p>基礎代謝は{{ basalMetabolicRate | addComma }}kcalです</p>
         <p>維持カロリー{{ estimatedCalories.maintain | addComma }}kcalです</p>
-        <p>0.25 kg / 週{{ estimatedCalories.maintain | addComma }}kcalです</p>
+        <p>0.25 kg / 週{{ estimatedCalories.easyWeightLoss | addComma }}kcalです</p>
+        <p>0.5 kg / 週{{ estimatedCalories.mediumWeightLoss | addComma }}kcalです</p>
+        <p>1 kg / 週{{ estimatedCalories.hardWeightLoss | addComma }}kcalです</p>
+        <p>0.25 kg / 週{{ estimatedCalories.easyWeightGain | addComma }}kcalです</p>
+        <p>0.5 kg / 週{{ estimatedCalories.mediumWeightGain | addComma }}kcalです</p>
+        <p>1 kg / 週{{ estimatedCalories.hardWeightGain | addComma }}kcalです</p>
       </div>
       
     </div>

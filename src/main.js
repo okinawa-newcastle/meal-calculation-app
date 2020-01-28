@@ -14,11 +14,12 @@ new Vue({
   data: () => ({
     message2 : 'hoge piko',
     btnBasalMetabolicRate : '計算',
+    caloriesInOneKilogram : 7200,
     basalMetabolicRate : '',
     estimatedCalories : {},
     inputWeight : null,
     inputBodyfat : null,
-    inputErrorAlert : '',
+    inputErrorAlertMessage : '',
     inputActivityLevel : null
   }),
   methods: {
@@ -38,19 +39,32 @@ new Vue({
       }
       // check input errors
       if(inputErrors.length > 0){
-        this.inputErrorAlert = inputErrors.join('・')
+        this.inputErrorAlertMessage = inputErrors.join('・')
         this.basalMetabolicRate = null
       }else{
         this.btnBasalMetabolicRate = '再計算'
         // JISS方式
         this.basalMetabolicRate = 28.5 * (this.inputWeight - (this.inputWeight * (this.inputBodyfat/100)))
         this.basalMetabolicRate = Math.round(this.basalMetabolicRate)
-        let estimatedCalorieMaintain  = this.basalMetabolicRate * this.inputActivityLevel
-        this.estimatedCalories.maintain = estimatedCalorieMaintain
-        this.estimatedCalories.mildWeightLoss = estimatedCalorieMaintain
+        this.estimatedCalories.maintain  = this.basalMetabolicRate * this.inputActivityLevel
+        this.estimatedCalories.easyWeightLoss = this.calculateCaloriesPerDay('loss',0.25)
+        this.estimatedCalories.mediumWeightLoss = this.calculateCaloriesPerDay('loss',0.5)
+        this.estimatedCalories.hardWeightLoss = this.calculateCaloriesPerDay('loss',1)
+        this.estimatedCalories.easyWeightGain = this.calculateCaloriesPerDay('gain',0.25)
+        this.estimatedCalories.mediumWeightGain = this.calculateCaloriesPerDay('gain',0.5)
+        this.estimatedCalories.hardWeightGain = this.calculateCaloriesPerDay('gain',1)
         console.log('test')
       }
 
+    },
+    calculateCaloriesPerDay: function(type,pace) {
+      if(type === 'loss'){
+        return Math.round(this.estimatedCalories.maintain - ((this.caloriesInOneKilogram * pace)  / 7))
+      }else if(type === 'gain') {
+        return Math.round(this.estimatedCalories.maintain + ((this.caloriesInOneKilogram * pace)  / 7))
+      } else {
+        return 
+      }
     }
   },
   filters: {

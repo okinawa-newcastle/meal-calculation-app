@@ -35,7 +35,12 @@
         <p>1 kg / 週{{ estimatedCalories.hardWeightLoss | addComma }}kcalです</p>
         <p>0.25 kg / 週{{ estimatedCalories.easyWeightGain | addComma }}kcalです</p>
         <p>0.5 kg / 週{{ estimatedCalories.mediumWeightGain | addComma }}kcalです</p>
-        <p>1 kg / 週{{ estimatedCalories.hardWeightGain | addComma }}kcalです</p>
+        <!-- <p>1 kg / 週{{ estimatedCalories.hardWeightGain | addComma }}kcalです</p>
+        <input type="radio" id="one" value="One" v-model="dietType">
+        <label for="one">糖質制限</label>
+        <input type="radio" id="two" value="Two" v-model="dietType">
+        <label for="two">脂質制限</label> -->
+        <button type="button" @click="setBasalMetabolicRate">１食当たりの栄養素</button>
       </div>
       
     </div>

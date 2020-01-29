@@ -6,131 +6,137 @@
       color="cyan"
       dark
     >
-      <div class="d-flex align-center">
-        カロリー計算
+      <div class="d-flex align-center font-weight-black">
+        栄養素計算 
       </div>
       
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-content>
       <v-container fluidr>
-
         <v-row>
           <v-col cols="12" class="">
-            <v-card class="mx-auto ma-3 pa-6" >
-              <v-col cols="12" class="">
-                <header>目的</header>
-                <v-radio-group v-model="purpose" row v-on:change="reset(['purpose'])">
-                  <v-radio label="減量" value="weightLoss" ></v-radio>
-                  <v-radio label="増量" value="weightGain" ></v-radio>
-                </v-radio-group>
+            <v-card class="mx-auto ma-3 pa-3" >
+              <v-row>
+                <v-col cols="12"  sm=6 class="">
+                  <header>目的</header>
+                  <v-radio-group v-model="purpose" row v-on:change="reset(['purpose'])">
+                    <v-radio label="減量" value="weightLoss" ></v-radio>
+                    <v-radio label="増量" value="weightGain" ></v-radio>
+                  </v-radio-group>
 
-                <div v-if="purpose">
-                  <div v-if="purpose === 'weightLoss'">
-                    <header>減量方法</header>
-                    <v-radio-group v-model="weightLossMethod" row  v-on:change="reset(['purpose' , 'weightLossMethod'])">
-                      <v-radio label="糖質制限" value="carbohydrateRestriction" ></v-radio>
-                      <v-radio label="脂質制限" value="fatRestriction" ></v-radio>
-                    </v-radio-group>
+                  <div v-if="purpose">
+                    <div v-if="purpose === 'weightLoss'">
+                      <header>減量方法</header>
+                      <v-radio-group v-model="weightLossMethod" row  v-on:change="reset(['purpose' , 'weightLossMethod'])">
+                        <v-radio label="糖質制限" value="carbohydrateRestriction" ></v-radio>
+                        <v-radio label="脂質制限" value="fatRestriction" ></v-radio>
+                      </v-radio-group>
 
-                    <div v-if="weightLossMethod === 'carbohydrateRestriction'">
+                      <div v-if="weightLossMethod === 'carbohydrateRestriction'">
+                        <v-text-field
+                          label="体重"
+                          v-model="inputWeight" suffix="kg"
+                          type="number"
+                          min=0
+                          :rules="[rules.required,rules.r_min]"
+                        ></v-text-field>
+                        <v-card-actions>
+                          <v-btn :disabled="!inputWeight" color="success" @click="calculateMacrosInCarbohydrateRestriction" >
+                          {{btnBasalMetabolicRate}}</v-btn>
+                        </v-card-actions>
+                        
+                        <v-alert type="error" v-if="inputErrorAlertMessage">{{ inputErrorAlertMessage }}を入力して下さい</v-alert>
+                      </div>
+                    </div>
+                    <div v-if="purpose === 'weightGain' || weightLossMethod === 'fatRestriction'">
                       <v-text-field
-                        label="体重"
-                        v-model="inputWeight" suffix="kg"
-                        type="number"
-                        min=0
-                        :rules="[rules.required,rules.r_min]"
-                      ></v-text-field>
+                          label="体重"
+                          v-model="inputWeight" suffix="kg"
+                          type="number"
+                          min=0
+                          :rules="[rules.required,rules.r_min]"
+                        ></v-text-field>
+                      
+                      <v-text-field
+                          label="体脂肪率"
+                          v-model="inputBodyfat" suffix="%" :max="100"
+                          type="number"
+                          min=0
+                          :rules="[rules.required,rules.r_min]"
+                        ></v-text-field>
+
+                      <header>活動レベル</header>
+                      <v-radio-group v-model="inputActivityLevel">
+                        <v-radio label="ほぼ座っていて、運動もなし" value="1.3" ></v-radio>
+                        <v-radio label="適度な運動" value="1.5" ></v-radio>
+                        <v-radio label="移動の多い仕事。激しい運動" value="1.7" ></v-radio>
+                      </v-radio-group>
+                      
+                      <header>ペース 週/kg</header>
+                      <v-radio-group v-model="inputPace" row>
+                        <v-radio label="0.25" value="0.25" ></v-radio>
+                        <v-radio label="0.5" value="0.5" ></v-radio>
+                        <v-radio label="1" value="1" ></v-radio>
+                      </v-radio-group>
+
                       <v-card-actions>
-                        <v-btn :disabled="!inputWeight" color="success" @click="calculateMacrosInCarbohydrateRestriction" >
+                        <v-btn :disabled="!inputWeight || !inputBodyfat || !inputActivityLevel || !inputPace" color="success" @click="setBasalMetabolicRate" >
                         {{btnBasalMetabolicRate}}</v-btn>
                       </v-card-actions>
-                      
-                      <v-alert type="error" v-if="inputErrorAlertMessage">{{ inputErrorAlertMessage }}を入力して下さい</v-alert>
+                        
+                        <v-alert type="error" v-if="inputErrorAlertMessage">{{ inputErrorAlertMessage }}を入力して下さい</v-alert>
                     </div>
                   </div>
-                  <div v-if="purpose === 'weightGain' || weightLossMethod === 'fatRestriction'">
-                    <v-text-field
-                        label="体重"
-                        v-model="inputWeight" suffix="kg"
-                        type="number"
-                        min=0
-                        :rules="[rules.required,rules.r_min]"
-                      ></v-text-field>
-                    
-                    <v-text-field
-                        label="体脂肪率"
-                        v-model="inputBodyfat" suffix="%" :max="100"
-                        type="number"
-                        min=0
-                        :rules="[rules.required,rules.r_min]"
-                      ></v-text-field>
+                </v-col>
 
-                    <header>活動レベル</header>
-                    <v-radio-group v-model="inputActivityLevel">
-                      <v-radio label="1.3 - ほとんど、座っている生活。" value="1.3" >ｄ</v-radio>
-                      <v-radio label="1.5 - 座っている仕事だが、適度な運動。" value="1.5" ></v-radio>
-                      <v-radio label="1.7 - 移動の多い仕事。または、激しい運動。" value="1.7" ></v-radio>
-                    </v-radio-group>
-                    
-                    <header>ペース 週/kg</header>
-                    <v-radio-group v-model="inputPace" row>
-                      <v-radio label="0.25" value="0.25" ></v-radio>
-                      <v-radio label="0.5" value="0.5" ></v-radio>
-                      <v-radio label="1" value="1" ></v-radio>
-                    </v-radio-group>
-
-                    <v-card-actions>
-                      <v-btn :disabled="!inputWeight || !inputBodyfat || !inputActivityLevel || !inputPace" color="success" @click="setBasalMetabolicRate" >
-                      {{btnBasalMetabolicRate}}</v-btn>
-                    </v-card-actions>
-                      
-                      <v-alert type="error" v-if="inputErrorAlertMessage">{{ inputErrorAlertMessage }}を入力して下さい</v-alert>
+              
+                <v-col cols="12"  sm=6 class="" v-if="basalMetabolicRate || targetIntakeCalorie" transition="fade-transition">
+                  <div v-if="basalMetabolicRate">
+                    <!-- <v-col cols="12" class="" > -->
+                      <h3 class="headline font-weight-black" >現状</h3>
+                      <v-col cols="12" class="font-weight-black">基礎代謝：{{ basalMetabolicRate | addComma }}kcal
+                      </v-col>
+                      <v-col cols="12" class="font-weight-black">消費カロリー：{{ maintainCalorie | addComma }}kcal</v-col>
+                    <!-- </v-col> -->
                   </div>
-                </div>
-              </v-col>
-
-                <div v-if="basalMetabolicRate">
-                  <v-col cols="12" class="" >
-                    <p class="headline font-weight-black">基礎代謝は、{{ basalMetabolicRate | addComma }}kcalです</p>
-                    <p class="headline font-weight-black">消費カロリーは、{{ maintainCalorie | addComma }}kcalです</p>
-                  </v-col>
-                </div>
-                <div v-if="targetIntakeCalorie">
-                  <v-col cols="12" class="" >
-                    <h3 class="headline font-weight-black" >目標</h3>
-                    <v-col cols="12" class="font-weight-black">摂取カロリーは、{{ targetIntakeCalorie | addComma }}kcalです
-                    </v-col>
-                    <v-simple-table >
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">栄養素</th>
-                            <th class="text-left">kcal</th>
-                            <th class="text-left">グラム</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>タンパク質</td>
-                            <td>{{ nutrients.protein.kcal | addComma}}</td>
-                            <td>{{ nutrients.protein.gram | addComma}}</td>
-                          </tr>
-                          <tr>
-                            <td>脂質</td>
-                            <td>{{ nutrients.fat.kcal | addComma}}</td>
-                            <td>{{ nutrients.fat.gram | addComma}}</td>
-                          </tr>
-                          <tr>
-                            <td>糖質</td>
-                            <td>{{ nutrients.carbohydrate.kcal | addComma}}</td>
-                            <td>{{ nutrients.carbohydrate.gram | addComma}}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-col>
-                </div>
+                  <div v-if="targetIntakeCalorie">
+                    <!-- <v-col cols="12" class="" > -->
+                      <h3 class="headline font-weight-black" >目標</h3>
+                      <v-col cols="12" class="font-weight-black">摂取カロリー：{{ targetIntakeCalorie | addComma }}kcal
+                      </v-col>
+                      <v-simple-table >
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                              <th class="text-left">栄養素</th>
+                              <th class="text-left">kcal</th>
+                              <th class="text-left">グラム</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>タンパク質</td>
+                              <td>{{ nutrients.protein.kcal | addComma}}</td>
+                              <td>{{ nutrients.protein.gram | addComma}}</td>
+                            </tr>
+                            <tr>
+                              <td>脂質</td>
+                              <td>{{ nutrients.fat.kcal | addComma}}</td>
+                              <td>{{ nutrients.fat.gram | addComma}}</td>
+                            </tr>
+                            <tr>
+                              <td>糖質</td>
+                              <td>{{ nutrients.carbohydrate.kcal | addComma}}</td>
+                              <td>{{ nutrients.carbohydrate.gram | addComma}}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    <!-- </v-col> -->
+                  </div>
+                </v-col>
+              </v-row>
              </v-card>
           </v-col>
         </v-row>
@@ -253,6 +259,7 @@ export default {
         carbohydrate.kcal = this.targetIntakeCalorie * 0.1
         carbohydrate.gram = carbohydrate.kcal / 4
         this.nutrients.carbohydrate = carbohydrate
+        
       }
     },
     reset: function(notApplicableKeys) {

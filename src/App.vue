@@ -176,8 +176,6 @@ export default {
   })),
   methods: {
     setBasalMetabolicRate: function() {
-      this.inputWeight =72
-      this.inputBodyfat = 15
       let inputErrors = []
       // check input weight
       if(!this.inputWeight ){
@@ -213,6 +211,7 @@ export default {
         protein.gram = leanBodyWeight * 2.5 //除脂肪体重 * 2.5
         protein.kcal = protein.gram * 4
         this.nutrients.protein = protein
+        this.$set(this.nutrients, 'protein', protein)
         if(this.purpose === 'weightGain'){
           //増量
           fat.gram = this.inputWeight * 1 // 体重
@@ -222,10 +221,12 @@ export default {
           fat.kcal = this.targetIntakeCalorie * 0.1 // 体重
           fat.gram = fat.kcal / 9
         }
-        this.nutrients.fat = fat
+        // this.nutrients.fat = fat
+        this.$set(this.nutrients, 'fat', fat)
         carbohydrate.kcal = this.targetIntakeCalorie - (protein.kcal + fat.kcal)
         carbohydrate.gram = carbohydrate.kcal / 4
-        this.nutrients.carbohydrate = carbohydrate   
+        // this.nutrients.carbohydrate = carbohydrate   
+        this.$set(this.nutrients, 'carbohydrate', carbohydrate)
         this.scrollToResult()
       }
     },
@@ -248,15 +249,16 @@ export default {
         //タンパク質の必要量
         protein.kcal = this.targetIntakeCalorie * 0.3
         protein.gram = protein.kcal / 4
-        this.nutrients.protein = protein
+        // this.nutrients.protein = protein
+        this.$set(this.nutrients, 'protein', protein)
         //脂質の必要量
         fat.kcal = this.targetIntakeCalorie * 0.6
         fat.gram = fat.kcal / 9
-        this.nutrients.fat = fat
+        this.$set(this.nutrients, 'fat', fat)
         //糖質の必要量
         carbohydrate.kcal = this.targetIntakeCalorie * 0.1
         carbohydrate.gram = carbohydrate.kcal / 4
-        this.nutrients.carbohydrate = carbohydrate
+        this.$set(this.nutrients, 'carbohydrate', carbohydrate)
         this.scrollToResult()
         
       }

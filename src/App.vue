@@ -1,5 +1,4 @@
 <template>
-
   <v-app>
     <v-app-bar
       app
@@ -89,9 +88,8 @@
                     </div>
                   </div>
                 </v-col>
-
               
-                <v-col cols="12"  sm=6 class="" v-if="basalMetabolicRate || targetIntakeCalorie" transition="fade-transition">
+                <v-col id='calculationResult' cols="12"  sm=6 class="" v-if="basalMetabolicRate || targetIntakeCalorie" transition="fade-transition">
                   <div v-if="basalMetabolicRate">
                     <!-- <v-col cols="12" class="" > -->
                       <h3 class="headline font-weight-black" >現状</h3>
@@ -164,7 +162,7 @@ let initial = {
 }
 export default {
   name: 'App',
-
+  
   components: {
 
   },
@@ -228,7 +226,7 @@ export default {
         carbohydrate.kcal = this.targetIntakeCalorie - (protein.kcal + fat.kcal)
         carbohydrate.gram = carbohydrate.kcal / 4
         this.nutrients.carbohydrate = carbohydrate   
-
+        this.scrollToResult()
       }
     },
     calculateMacrosInCarbohydrateRestriction: function(){
@@ -259,8 +257,15 @@ export default {
         carbohydrate.kcal = this.targetIntakeCalorie * 0.1
         carbohydrate.gram = carbohydrate.kcal / 4
         this.nutrients.carbohydrate = carbohydrate
+        this.scrollToResult()
         
       }
+    },
+    scrollToResult : function(){
+      this.$nextTick(() => {
+        // this.$vuetify.goTo(this.target, this.options)
+        this.$vuetify.goTo("#calculationResult")
+      })
     },
     reset: function(notApplicableKeys) {
       let resetObjests =  Object.assign({}, initial);

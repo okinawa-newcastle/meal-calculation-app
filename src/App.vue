@@ -174,6 +174,9 @@ export default {
           r_min: v => v >= 0 || '正しく入力してください'
         }
   })),
+  created: function () {
+    this.$ga.page('/')
+  },
   methods: {
     setBasalMetabolicRate: function() {
       let inputErrors = []
@@ -228,6 +231,8 @@ export default {
         // this.nutrients.carbohydrate = carbohydrate   
         this.$set(this.nutrients, 'carbohydrate', carbohydrate)
         this.scrollToResult()
+
+        this.$ga.event('calculation', 'click')
       }
     },
     calculateMacrosInCarbohydrateRestriction: function(){
@@ -260,7 +265,8 @@ export default {
         carbohydrate.gram = carbohydrate.kcal / 4
         this.$set(this.nutrients, 'carbohydrate', carbohydrate)
         this.scrollToResult()
-        
+
+        this.$ga.event('calculation', 'click')
       }
     },
     scrollToResult : function(){
